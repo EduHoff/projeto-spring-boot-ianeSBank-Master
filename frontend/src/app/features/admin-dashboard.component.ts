@@ -1,0 +1,11 @@
+import { Component,inject,OnInit } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { ApiService } from '../core/api.service';
+import { IconComponent } from '../shared/icon.component';
+@Component({standalone:true,imports:[RouterLink,IconComponent],template:`
+  <div class="page-title dashboard-title"><div><div class="eyebrow">ADMINISTRAÇÃO</div><h1>Visão geral do banco</h1><p class="muted">Acompanhe os indicadores e gerencie a estrutura do ianeSBank Master.</p></div><a routerLink="/admin/contas" class="btn primary"><app-icon name="plus"/> Abrir nova conta</a></div>
+  @if(erro){<div class="alert error">{{erro}}</div>}
+  <div class="stats-grid"><div class="stat-card"><span>CLIENTES <i><app-icon name="users"/></i></span><strong>{{d.clientes ?? '–'}}</strong><small>Clientes cadastrados</small></div><div class="stat-card"><span>CONTAS BANCÁRIAS <i><app-icon name="card"/></i></span><strong>{{d.contas ?? '–'}}</strong><small>Contas ativas</small></div><div class="stat-card"><span>TRANSAÇÕES <i><app-icon name="transfer"/></i></span><strong>{{d.transacoes ?? '–'}}</strong><small>Operações registradas</small></div><div class="stat-card primary-card"><span>SALDO TOTAL <i><app-icon name="trend"/></i></span><strong>R$<br>{{valor(d.saldoTotal)}}</strong><small>Soma dos saldos de todas as contas</small></div></div>
+  <div class="panel quick-panel"><h2>Acesso rápido</h2><div class="action-grid"><a routerLink="/admin/clientes" class="action-tile"><i><app-icon name="users"/></i><span><b>Gerenciar clientes</b><small>Cadastros e endereços</small></span><em><app-icon name="chevron"/></em></a><a routerLink="/admin/contas" class="action-tile"><i><app-icon name="card"/></i><span><b>Contas bancárias</b><small>Abertura e bloqueio</small></span><em><app-icon name="chevron"/></em></a><a routerLink="/admin/usuarios" class="action-tile"><i><app-icon name="shield"/></i><span><b>Acesso ao sistema</b><small>Usuários</small></span><em><app-icon name="chevron"/></em></a></div></div>
+  `})
+export class AdminDashboardComponent implements OnInit {api=inject(ApiService);d:any={};erro='';ngOnInit(){this.api.get('/admin/dashboard').subscribe({next:r=>this.d=r,error:e=>this.erro=e.error?.erro||'Servidor indisponível.'});}valor(v:any){return Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}}
